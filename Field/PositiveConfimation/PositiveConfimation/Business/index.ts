@@ -43,7 +43,15 @@ export const createPositiveConfirmation = async (questions: IQuestion[], inciden
     let positiveGroupId = await serviceDynamics.CreateRegisterAsync("academy_positiveconfimation",
         {
             "academy_IncidentId@odata.bind": `/incidents(${incidentId})`,
-            academy_question: "Principal"
+            academy_question: ` - ${new Intl.DateTimeFormat("pt-br", {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                hour12: false,
+            }).format(new Date())}`
         });
 
     for (let i = 0; i < questions.length; i++) {
