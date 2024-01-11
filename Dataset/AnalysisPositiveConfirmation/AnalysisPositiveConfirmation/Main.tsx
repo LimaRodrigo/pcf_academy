@@ -108,8 +108,8 @@ export function Main(props: IMainProps) {
   return (
     <Stack tokens={{ childrenGap: 10 }} style={{ width: "100%" }}>
 
-      {console.info("dataset", props.dataSet)}
-      {console.info("state", state)}
+      {console.info("AnalysisPositiveConfirmation_dataset", props.dataSet)}
+      {console.info("AnalysisPositiveConfirmation_state", state)}
       <DetailsList
         items={state.items}
         compact={false}
