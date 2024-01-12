@@ -36,6 +36,5 @@ PcfAcademy.Incident = {
         let valueOutput = outputs["academy_positiveconfimationok.fieldControl.isSucess"].value;
 
         PcfAcademy.Incident.formContext.ui.tabs.get("CASERELATIONSHIP_TAB").setVisible(valueOutput);
-        PcfAcademy.Incident.formContext.ui.tabs.get("tab_3").setVisible(!valueOutput);
     }
 };
