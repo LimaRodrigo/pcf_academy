@@ -11,8 +11,6 @@ Undefined	also equivalent to the unit type.
 Object	    similar to records.
  */
 
-
-
 //Interface and method Generics
 interface IPessoa {
     getFuncao<T>(id: T);
@@ -21,12 +19,11 @@ interface IPessoa {
 //Composing Types
 type Profissao = "DEV" | "CONSULTOR" | "OUTRO";
 
-
-class Pessoa implements IPessoa {
+export class Pessoa implements IPessoa {
 
     nome: string;
     ultimoNome?: string;
-    profissao: Profissao;
+
 
     constructor(_nome: string, _ultimoNome?: string) {
         this.nome = _nome;
@@ -34,7 +31,18 @@ class Pessoa implements IPessoa {
     }
 
 
-    getFuncao<T>(id: T) : number | null | string {
+    getFuncao<T>(id: T): number | null | string {
         return 38;
     }
+}
+
+export class Funcionario extends Pessoa {
+    profissao: Profissao;
+    nivel: Nivel
+}
+
+export enum Nivel {
+    jr = 1,
+    pleno = 2,
+    senior = 3
 }
