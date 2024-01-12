@@ -8,8 +8,7 @@ export interface IGlobalState {
     isCompleteConfirmation?: boolean;
     isLoading: boolean;
     isPossiblityFraud?: boolean;
-    
-
+    incidentId: string;
 }
 
 export interface IGlobalContext {
