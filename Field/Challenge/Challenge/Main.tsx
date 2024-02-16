@@ -24,6 +24,14 @@ export function Main(props: IMain) {
 
     const Onload = async () => {
       try {
+        if (!props.customerId) {
+          setState({
+            ...state,
+            isLoading: false,
+          });
+          return;
+        }
+
         let configFields = await BO.getConfigVariable();
         let customer = await BO.getDataCustomer(props.customerId!, configFields);
         configFields.fields.forEach(x => x.value = customer[x.logicalName]);
@@ -124,29 +132,41 @@ export function Main(props: IMain) {
     setTimeout(() => { setState({ ...state, menssageBar: undefined }); }, 5000);
   }
 
-  return (
-    <Stack styles={styleStackBase} tokens={{ padding: 5 }}>
-      {console.log("Challenge_state", state)}
-      {state.isLoading &&
-        <Stack horizontal horizontalAlign='center' style={{ width: "100%" }}>
-          <ProgressIndicator styles={{ root: { width: "100%" } }} />
-        </Stack>}
-      {state.menssageBar &&
-        <MessageBar
-          messageBarType={state.menssageBar.type}
-          isMultiline={false} >
-          {state.menssageBar.text}
-        </MessageBar>
-      }
-      {state.configFields?.fields && state.configFields?.fields.map((x) => generateField(x))}
 
-      {state.configFields &&
-        <Stack horizontal horizontalAlign='end' tokens={{ padding: "5px 15px 5px 15px" }}>
-          <PrimaryButton text="Atualizar" onClick={onClickUpdate} allowDisabledFocus disabled={state.isLoading || !state.configFields} />
-        </Stack>
-      }
-    </Stack>
-  );
+  const generateLoading = () => {
+    if (state.isLoading)
+      return (<Stack horizontal horizontalAlign='center' style={{ width: "100%" }}>
+        <ProgressIndicator styles={{ root: { width: "100%" } }} />
+      </Stack>
+      );
+  }
+
+  const generateMenssageBar = () => {
+    if (state.menssageBar)
+      return (<MessageBar
+        messageBarType={state.menssageBar.type}
+        isMultiline={false} >
+        {state.menssageBar.text}
+      </MessageBar>
+      );
+  }
+
+  if (state.customerId)
+    return (
+      <Stack styles={styleStackBase} tokens={{ padding: 5 }}>
+        {console.log("Challenge_state", state)}
+        {generateLoading()}
+        {generateMenssageBar()}
+        {state.configFields?.fields && state.configFields?.fields.map((x) => generateField(x))}
+        {state.configFields &&
+          <Stack horizontal horizontalAlign='end' tokens={{ padding: "5px 15px 5px 15px" }}>
+            <PrimaryButton text="Atualizar" onClick={onClickUpdate} allowDisabledFocus disabled={state.isLoading || !state.configFields} />
+          </Stack>
+        }
+      </Stack>
+    );
+  else
+    return (<></>);
 }
 
 const styleStackBase: IStackStyles = {
