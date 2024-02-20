@@ -4,11 +4,12 @@
 - [Overview](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/overview)
 - [Property](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/manifest-schema-reference/property)
 - [Dataset](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/dataset)
-- [context](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/context)
+- [Context](https://learn.microsoft.com/en-us/power-apps/developer/component-framework/reference/context)
 - [Instalation Microsoft Power Platform CLI](https://learn.microsoft.com/pt-br/power-platform/developer/cli/introduction)
 - [Get Started - Create your first component](https://learn.microsoft.com/pt-br/power-apps/developer/component-framework/implementing-controls-using-typescript?tabs=before)
 - [Best Pratices](https://learn.microsoft.com/pt-br/power-apps/developer/component-framework/code-components-best-practices)
 - [Event - addonoutputchange](https://learn.microsoft.com/en-us/power-apps/developer/model-driven-apps/clientapi/reference/controls/addonoutputchange)
+- [Limitations](https://learn.microsoft.com/pt-br/power-apps/developer/component-framework/limitations)
 
 ### Reference typscript 
 - [React Typescript](https://www.typescriptlang.org/pt/docs/handbook/react.html)
