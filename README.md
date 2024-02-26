@@ -12,8 +12,10 @@
 - [Limitations](https://learn.microsoft.com/pt-br/power-apps/developer/component-framework/limitations)
 
 ### Reference typscript 
+- [React Lib @types/xrm](https://www.npmjs.com/package/@types/xrm)
 - [React Typescript](https://www.typescriptlang.org/pt/docs/handbook/react.html)
-- [@types/xrm](https://www.npmjs.com/package/@types/xrm)
+- [React Lifecicle X Equivalent Hooks](https://levelup.gitconnected.com/react-lifecycle-methods-and-their-equivalents-in-functional-components-5677a3fa623d)
+- [React Class X Hooks](https://dev.to/elanandkumar/react-component-lifecycle-with-hook-6lo)
 
 ### MVP's Blog
 - [Diana birkelbach](https://dianabirkelbach.wordpress.com)
