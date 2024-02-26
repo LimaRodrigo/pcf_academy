@@ -32,7 +32,10 @@ export class Challenge implements ComponentFramework.ReactControl<IInputs, IOutp
      * @returns ReactElement root react element for the control
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
-        const props: IMain = { customerId:  context.parameters.customerId.raw || "" };
+        const props: IMain = { 
+            customerId:  context.parameters.customerId.raw || "",
+            context: context
+         };
         return React.createElement(
             Main, props
         );

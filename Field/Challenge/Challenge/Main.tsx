@@ -4,9 +4,11 @@ import { IConfigField, IField } from './model/IConfigField';
 import * as BO from "./Business"
 import { useEffect, useState } from 'react';
 import { IMenssageNotification } from './model/IMenssageNotification';
+import { IInputs } from './generated/ManifestTypes';
 
 export interface IMain {
   customerId?: string;
+  context: ComponentFramework.Context<IInputs>;
 }
 
 export interface IMainState {
@@ -15,19 +17,25 @@ export interface IMainState {
   customer?: any;
   menssageBar?: IMenssageNotification;
   isLoading: boolean;
+  isFormUpdate: boolean;
 }
 
 export function Main(props: IMain) {
-  const [state, setState] = useState<IMainState>({ customerId: props.customerId, isLoading: true });
+  const [state, setState] = useState<IMainState>({ customerId: props.customerId, isLoading: true, isFormUpdate: false });
 
   useEffect(() => {
 
     const Onload = async () => {
       try {
+        //@ts-ignore
+        if (!props.context.page.entityId)
+          return;
+
         if (!props.customerId) {
           setState({
             ...state,
             isLoading: false,
+            isFormUpdate: true
           });
           return;
         }
