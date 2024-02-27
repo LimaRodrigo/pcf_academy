@@ -55,11 +55,31 @@ npm start watch
 ```  
 
 ##### Create authentication
+###### Active Dataverse (Preterido)
 ```  
-pac auth create -u [URL DA ORGANIZAÇÃO] 
+pac auth create -u [URL DO AMBIENTE] 
 ```  
+###### Universal Profile
+```  
+PAC auth create -n [NOME CONEXÃO]  -env [URL DO AMBIENTE] 
+``` 
+###### Select Universal Profile
+```  
+pac auth select -n [NOME CONEXÃO]
+``` 
 
 ##### Publish pcf 
+###### Default
 ```  
 pac pcf push -pp [PREFIXO PUBLICADOR EXISTENTE]
+```  
+
+###### publish incremental
+```  
+pac pcf push -pp [PREFIXO PUBLICADOR EXISTENTE] -inc
+```  
+
+###### publish incremental, select enviroment
+```  
+pac pcf push -pp [PREFIXO PUBLICADOR EXISTENTE] -inc -env [URL DO AMBIENTE]
 ```  
