@@ -1,0 +1,9 @@
+.pcf-sample-hooks-form-message-input{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: 100%;
+}
+.pcf-sample-hooks-input-message-input{
+    flex-grow: 1;
+}

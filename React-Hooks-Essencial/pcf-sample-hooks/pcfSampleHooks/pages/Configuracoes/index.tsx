@@ -5,7 +5,7 @@ import React from "react";
 function Configuracoes() {
   return (
     <div>
-      <Divider alignContent="center">Configurações</Divider>
+      <Divider alignContent="center">CONFIGURAÇÕES</Divider>
     </div>
   );
 }

@@ -1,0 +1,11 @@
+.pcf-sample-hooks-container-chat-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+.pcf-sample-hooks-message-input-chat-page{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}

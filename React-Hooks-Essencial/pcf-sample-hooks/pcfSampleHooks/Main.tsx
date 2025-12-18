@@ -18,7 +18,7 @@ function Main(props: IMainProps) {
     return (
         <FluentProvider theme={webLightTheme}>
             <GlobalContextProvider>
-                <Home />
+                <Home context={props.context} />
             </GlobalContextProvider>
         </FluentProvider>
     );

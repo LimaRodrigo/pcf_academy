@@ -5,7 +5,7 @@ import React from "react";
 function Fixados() {
   return (
     <div>
-      <Divider alignContent="center">Fixados</Divider>
+      <Divider alignContent="center">FIXADOS</Divider>
     </div>
   );
 }
