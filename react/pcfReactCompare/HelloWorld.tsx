@@ -3,9 +3,7 @@ import { Label, PrimaryButton, Stack } from '@fluentui/react';
 import { IMainProps } from './Main';
 import { formatDatetimeBr } from "./services";
 
-export interface IHelloWorldProps extends IMainProps {
-
-}
+export type IHelloWorldProps = IMainProps;
 
 export interface IHelloWorldState {
   name?: string;
@@ -24,7 +22,7 @@ export class HelloWorld extends React.Component<IHelloWorldProps, IHelloWorldSta
     //Faça alguma coisa no onload do componente
   }
 
-  componentDidUpdate(prevProps: Readonly<IHelloWorldProps>, prevState: Readonly<IHelloWorldState>, snapshot?: any): void {
+  componentDidUpdate(prevProps: Readonly<IHelloWorldProps>, prevState: Readonly<IHelloWorldState>): void {
 
     if (this.props.name !== prevProps.name) {
       //faça alguma coisa após props.name ser modificado

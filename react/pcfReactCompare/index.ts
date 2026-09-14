@@ -9,7 +9,9 @@ export class pcfReactCompare implements ComponentFramework.ReactControl<IInputs,
     /**
      * Empty constructor.
      */
-    constructor() { }
+    constructor() { 
+        //empty
+    }
 
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.

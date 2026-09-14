@@ -4,9 +4,7 @@ import { IMainProps } from './Main';
 import { useEffect, useState } from 'react';
 import { formatDatetimeBr } from "./services";
 
-export interface IHelloWorldHooksProps extends IMainProps {
-
-}
+export type IHelloWorldHooksProps = IMainProps;
 
 export interface IHelloWorldHooksState {
     name?: string;
