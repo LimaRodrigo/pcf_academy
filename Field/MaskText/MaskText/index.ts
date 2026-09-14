@@ -9,7 +9,9 @@ export class MaskText implements ComponentFramework.ReactControl<IInputs, IOutpu
     /**
      * Empty constructor.
      */
-    constructor() { }
+    constructor() {
+        //empty
+     }
 
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
@@ -33,9 +35,9 @@ export class MaskText implements ComponentFramework.ReactControl<IInputs, IOutpu
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
         const props: IMainProps = { 
-            valor: context.parameters.dado.raw || "",
-            mascara: context.parameters.mascara.raw || "",
-            SetInputChanges: this.SetInputChanges.bind(this),
+            valor: context.parameters.dado.raw ?? "",
+            mascara: context.parameters.mascara.raw ?? "",
+            SetInputChanges: (valor) => { this.SetInputChanges(valor); },
          };
         return React.createElement(
             Main, props
@@ -60,7 +62,7 @@ export class MaskText implements ComponentFramework.ReactControl<IInputs, IOutpu
         // Add code to cleanup control if necessary
     }
 
-    public async SetInputChanges(valor: string | undefined): Promise<void> {
+    public SetInputChanges(valor: string | undefined): void {
         valor = valor?.replace(/[^0-9]/g, "");
         this.inputEntity = valor;
         this.notifyOutputChanged();
