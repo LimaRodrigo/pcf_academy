@@ -31,7 +31,7 @@ export function ChartCuston(props: IChartCustonProps) {
     }, [props.data]);
 
     const generateChartProps = () => {
-        let points: IChartDataPoint[] = [];
+        const points: IChartDataPoint[] = [];
 
         props.data.forEach(x => {
             points.push({
