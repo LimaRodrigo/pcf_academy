@@ -10,6 +10,10 @@ export interface IMainProps {
   dataSet: ComponentFramework.PropertyTypes.DataSet
 }
 
+type TableItem = Record<string, unknown> & {
+  academy_positiveconfimationid: string;
+};
+
 export interface IMainState {
   items: IPositiveConfirmation[]
   tableColumns?: IColumn[],
@@ -19,7 +23,7 @@ export function Main(props: IMainProps) {
   const [state, setState] = useState<IMainState>({ items: [] });
 
   useEffect(() => {
-    let data = generateList()
+    const data = generateList()
     setState({
       ...state,
       items: data,
@@ -32,25 +36,24 @@ export function Main(props: IMainProps) {
     if (MOCK.isMock)
       return MOCK.positiveConfirmations;
 
-    let itens: IPositiveConfirmation[] = [];
-    let columns = props.dataSet.columns.map(x => x.name);
-    let ids: any[] = props.dataSet.sortedRecordIds;
+    const itens: IPositiveConfirmation[] = [];
+    const columns = props.dataSet.columns.map(x => x.name);
+    const ids: string[] = props.dataSet.sortedRecordIds;
 
     ids.forEach((id) => {
-      let item: any = {};
-      item.academy_positiveconfimationid = id;
+      const item: TableItem = { academy_positiveconfimationid: id };
       columns.forEach((col) => {
         item[col] = props.dataSet.records[id].getValue(col);
       });
-      itens.push(item as IPositiveConfirmation);
+      itens.push(item as unknown as IPositiveConfirmation);
     });
 
     return itens;
   }
 
   const generateCollumns = (): IColumn[] => {
-    let columns: IColumn[] = [];
-    let columnsData = MOCK.isMock ? MOCK.columnsDataset.filter(x=> x.name  !== "createdon") : props.dataSet.columns.filter(x=> x.name  !== "createdon");
+    const columns: IColumn[] = [];
+    const columnsData = MOCK.isMock ? MOCK.columnsDataset.filter(x=> x.name  !== "createdon") : props.dataSet.columns.filter(x=> x.name  !== "createdon");
 
     columnsData.forEach((col) => {
       columns.push({ key: col.name, name: col.displayName, fieldName: col.name, minWidth: 100, maxWidth: 150, isResizable: true } as IColumn);
@@ -59,14 +62,14 @@ export function Main(props: IMainProps) {
   }
 
   const getGroupsitem = (data: IPositiveConfirmation[]): IGroup[] => {
-    let groups: IGroup[] = [];
+    const groups: IGroup[] = [];
 
-    let registersGroups = data.filter(x => !x.academy_positiveconfimationprincipal);
+    const registersGroups = data.filter(x => !x.academy_positiveconfimationprincipal);
 
     registersGroups.forEach((x) => {
-      let startIndex = data.findIndex(y => y.academy_positiveconfimationprincipal?.id?.guid === x.academy_positiveconfimationid);
+      const startIndex = data.findIndex(y => y.academy_positiveconfimationprincipal?.id?.guid === x.academy_positiveconfimationid);
 
-      let count = data.filter(y => y.academy_positiveconfimationprincipal?.id?.guid === x.academy_positiveconfimationid).length;
+      const count = data.filter(y => y.academy_positiveconfimationprincipal?.id?.guid === x.academy_positiveconfimationid).length;
 
       groups.push({
         key: x.academy_code,
@@ -81,15 +84,15 @@ export function Main(props: IMainProps) {
     return groups;
   }
 
-  const onRendertable = (item?: any, index?: number | undefined, column?: IColumn | undefined) => {
-    const columnName = column?.fieldName || "";
+  const onRendertable = (item?: TableItem, index?: number, column?: IColumn) => {
+    const columnName = column?.fieldName ?? "";
 
     if (!item)
       return <></>;
 
     switch (columnName) {
       case "createdon":
-        return <>{formatDatetimeBr(new Date(item[columnName]))}</>
+        return <>{formatDatetimeBr(new Date(item[columnName] as string))}</>
       case "academy_answeriscorrect":
         return <Stack horizontal horizontalAlign='center'>{item[columnName] === "1" ?
         <Text variant='large'><Icon iconName="Accept" styles={{ root: { color: "green" } }} /> </Text>:
@@ -99,10 +102,17 @@ export function Main(props: IMainProps) {
       case "academy_positiveconfimationprincipal":
         return <>{item[columnName] ? (item[columnName] as Ilookup).name : ""}</>;
       default:
-        return <>{item[columnName]}</>;
+        return <>{renderCellValue(item[columnName])}</>;
     }
 
 
+  }
+
+  const renderCellValue = (value: unknown): React.ReactNode => {
+    if (value === null || value === undefined || typeof value === "boolean" || typeof value === "string" || typeof value === "number")
+      return value;
+
+    return JSON.stringify(value) ?? "";
   }
 
   return (
