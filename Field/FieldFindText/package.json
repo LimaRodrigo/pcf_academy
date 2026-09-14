@@ -14,7 +14,8 @@
   "dependencies": {
     "@fluentui/react": "8.29.0",
     "react": "16.14.0",
-    "react-dom": "16.14.0"
+    "react-dom": "16.14.0",
+    "form-data": ">=4.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
@@ -29,6 +30,7 @@
     "pcf-start": "^1",
     "react": "^16.14.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "8.44.0"
+    "typescript-eslint": "8.44.0",
+    "form-data": ">=4.0.6"
   }
 }
