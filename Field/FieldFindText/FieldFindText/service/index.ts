@@ -1,26 +1,32 @@
-export const RetrieveMultipleRecords = (entityLogicalName: string, options?: string | undefined, maxPageSize?: number | undefined): Promise<ComponentFramework.WebApi.RetrieveMultipleResponse> => {
-    return new Promise((resolve, reject) => {
-        //@ts-ignore
-        // eslint-disable-next-line
-        Xrm.WebApi.retrieveMultipleRecords(entityLogicalName, options, maxPageSize).then(
-            function (response: ComponentFramework.WebApi.RetrieveMultipleResponse) {
-                resolve(response);
-            },
-            function (error: any) {
-                reject(error.message);
-            });
-    });
+interface DynamicsError {
+    message?: string;
 }
 
-export const FetchJS = async (url: string): Promise<any> => {
-    return new Promise((resolve, reject) => {
-        fetch(url)
-            .then((response) => {
-                if (!response.ok)
-                    reject("erro");
-                return response.json();
-            }).then((data) => {
-                resolve(data.value);
-            }).catch((e) => reject(e));
-    });
+const getErrorMessage = (error: unknown): string => {
+    if (typeof error === "object" && error !== null && "message" in error) {
+        const message = (error as DynamicsError).message;
+        if (typeof message === "string") return message;
+    }
+    return "Erro desconhecido";
+};
+
+export const RetrieveMultipleRecords = async (entityLogicalName: string, options?: string, maxPageSize?: number): Promise<ComponentFramework.WebApi.RetrieveMultipleResponse> => {
+    try {
+        // @ts-expect-error Xrm is supplied by the model-driven app runtime.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        return await Xrm.WebApi.retrieveMultipleRecords(entityLogicalName, options, maxPageSize) as ComponentFramework.WebApi.RetrieveMultipleResponse;
+    } catch (error: unknown) {
+        throw new Error(getErrorMessage(error));
+    }
+}
+
+export const FetchJS = async <T = unknown>(url: string): Promise<T> => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Erro ao consultar o endpoint");
+
+    const data: unknown = await response.json();
+    if (typeof data === "object" && data !== null && "value" in data)
+        return (data as { value: T }).value;
+
+    return data as T;
 }

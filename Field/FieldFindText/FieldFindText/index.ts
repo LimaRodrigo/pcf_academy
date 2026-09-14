@@ -12,7 +12,9 @@ export class FieldFindText
   /**
    * Empty constructor.
    */
-  constructor() { }
+  constructor() {
+    //empty
+   }
 
   /**
    * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
@@ -23,7 +25,7 @@ export class FieldFindText
    */
   public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary): void {
     this.notifyOutputChanged = notifyOutputChanged;
-    this.inputEntity = context.parameters.entity.raw || "";
+    this.inputEntity = context.parameters.entity.raw ?? "";
   }
 
   /**p
@@ -33,9 +35,9 @@ export class FieldFindText
    */
   public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
     const props: IMainProps = {
-      entity: context.parameters.entity.raw || "",
-      attribute: context.parameters.attribute.raw || "",
-      SetInputChanges: this.SetInputChanges.bind(this)
+      entity: context.parameters.entity.raw ?? "",
+      attribute: context.parameters.attribute.raw ?? "",
+      SetInputChanges: (entity, attribute) => { void this.SetInputChanges(entity, attribute); }
     };
     return React.createElement(Main, props);
   }
@@ -59,7 +61,7 @@ export class FieldFindText
     // Add code to cleanup control if necessary
   }
 
-  public async SetInputChanges(entity: string | undefined, attribute: string | undefined): Promise<void> {
+  public SetInputChanges(entity: string | undefined, attribute: string | undefined): void {
     if (MOCK.isMock) return;
     this.inputEntity = entity;
     this.inputAttribute = attribute;

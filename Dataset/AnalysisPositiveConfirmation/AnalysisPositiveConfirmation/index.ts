@@ -10,7 +10,9 @@ export class AnalysisPositiveConfirmation implements ComponentFramework.ReactCon
     /**
      * Empty constructor.
      */
-    constructor() { }
+    constructor() {
+        //empty
+     }
 
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.

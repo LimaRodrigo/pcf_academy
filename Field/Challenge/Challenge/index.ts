@@ -9,7 +9,9 @@ export class Challenge implements ComponentFramework.ReactControl<IInputs, IOutp
     /**
      * Empty constructor.
      */
-    constructor() { }
+    constructor() { 
+        //empty
+    }
 
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
@@ -33,7 +35,7 @@ export class Challenge implements ComponentFramework.ReactControl<IInputs, IOutp
      */
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
         const props: IMain = { 
-            customerId:  context.parameters.customerId.raw || "",
+            customerId:  context.parameters.customerId.raw ?? "",
             context: context
          };
         return React.createElement(

@@ -31,25 +31,24 @@ export function Main(props: IMainProps) {
         optionEntityKeySelected: undefined,
         isLoading: true,
       });
-      let responseEntities: IComboBoxOption[] = [];
+      const responseEntities = await BO.GetEntities();
       let responseAttributes: IComboBoxOption[] = [];
-      responseEntities = await BO.GetEntities();
       if (props.entity)
         responseAttributes = await BO.GetAttributes(props.entity);
       SetState({
         ...state,
         optionsEntity: responseEntities,
-        optionEntityKeySelected: props.entity ? props.entity : undefined,
+        optionEntityKeySelected: props.entity ?? undefined,
         optionsAttribute: responseAttributes,
-        optionAttributeKeySelected: props.attribute ? props.attribute : undefined,
+        optionAttributeKeySelected: props.attribute ?? undefined,
         isLoading: false,
       });
     }
-    onload();
+    void onload();
   }, []);
 
 
-  const OnChangeComboBoxEntity = async (event: React.FormEvent<IComboBox>, option?: IComboBoxOption | undefined, index?: number | undefined, value?: string | undefined) => {
+  const OnChangeComboBoxEntity = async (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
 
     SetState({
       ...state,
@@ -58,24 +57,26 @@ export function Main(props: IMainProps) {
       isLoading: true,
     });
 
-    let response = await BO.GetAttributes(option?.key! as string);
+    const entity = typeof option?.key === "string" ? option.key : "";
+    const response = await BO.GetAttributes(entity);
 
     SetState({
       ...state,
-      optionEntityKeySelected: option?.key as string,
+      optionEntityKeySelected: entity,
       optionsAttribute: response,
       isLoading: false,
     });
-    props.SetInputChanges(option?.key as string, undefined);
+    props.SetInputChanges(entity, undefined);
   }
 
-  const OnChangeComboBoxAttribute = async (event: React.FormEvent<IComboBox>, option?: IComboBoxOption | undefined, index?: number | undefined, value?: string | undefined) => {
+  const OnChangeComboBoxAttribute = (event: React.FormEvent<IComboBox>, option?: IComboBoxOption, index?: number, value?: string) => {
+    const attribute = typeof option?.key === "string" ? option.key : undefined;
     SetState({
       ...state,
-      optionAttributeKeySelected: option?.key as string,
+      optionAttributeKeySelected: attribute,
 
     });
-    props.SetInputChanges(state.optionEntityKeySelected,  option?.key as string);
+    props.SetInputChanges(state.optionEntityKeySelected, attribute);
   }
 
   return (
@@ -90,7 +91,7 @@ export function Main(props: IMainProps) {
               autoComplete={'on'}
               options={state.optionsEntity}
               selectedKey={state.optionEntityKeySelected}
-              onChange={OnChangeComboBoxEntity}
+              onChange={(event, option, index, value) => { void OnChangeComboBoxEntity(event, option, index, value); }}
               disabled={state.isLoading}
             />
           </Stack>

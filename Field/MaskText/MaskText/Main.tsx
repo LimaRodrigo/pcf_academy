@@ -22,14 +22,14 @@ export function Main(props: IMainProps) {
     });
   }, [props.mascara, props.valor])
 
-  const maskFormat: { [key: string]: RegExp } = {
+  const maskFormat: Record<string, RegExp> = {
     '*': /[a-zA-Z0-9_]/, //Permite números e letras.
     '9': /[0-9]/, // Permite somente números.
     'a': /[a-zA-Z]/, //Permite somente letras.
     's': /[^a-zA-Z 0-9]+/g, //permite letras, números e carateres especiais
   };
 
-  const onChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => {
+  const onChange = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
     props.SetInputChanges(newValue);
   }
 

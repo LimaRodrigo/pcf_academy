@@ -11,7 +11,9 @@ export class PositiveConfimation implements ComponentFramework.ReactControl<IInp
     /**
      * Empty constructor.
      */
-    constructor() { }
+    constructor() { 
+        //empty
+    }
 
     /**
      * Used to initialize the control instance. Controls can kick off remote server calls and other initialization actions here.
@@ -33,10 +35,9 @@ export class PositiveConfimation implements ComponentFramework.ReactControl<IInp
     public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
         const props: IMainProps = {
             positiveconfimationok: context.parameters.positiveconfimationok.raw,
-            customerId: context.parameters.customer.raw || "",
-            //@ts-ignore
-            incidentId: context.page.entityId,
-            setOutputChanges: this.setOutputChanges.bind(this)
+            customerId: context.parameters.customer.raw ?? "",
+            incidentId: (context as ComponentFramework.Context<IInputs> & { page?: { entityId?: string } }).page?.entityId ?? "",
+            setOutputChanges: (confirmation, isSucess) => { this.setOutputChanges(confirmation, isSucess); }
         };
         return React.createElement(
             Main, props
@@ -63,7 +64,7 @@ export class PositiveConfimation implements ComponentFramework.ReactControl<IInp
         // Add code to cleanup control if necessary
     }
 
-    public async setOutputChanges(confirmation: boolean | undefined, isSucess: boolean | undefined): Promise<void> {
+    public setOutputChanges(confirmation: boolean | undefined, isSucess: boolean | undefined): void {
         console.log("setOutputChanges", confirmation, isSucess);
         if (MOCK.isMock) return;
         this.inputPositiveconfimationok = confirmation;

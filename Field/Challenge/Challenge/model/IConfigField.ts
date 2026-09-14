@@ -11,5 +11,5 @@ export interface IField {
     required: boolean;
     readonly: boolean;
     errorMessage?: string;
-    value?: any | null | undefined;
+    value?: unknown;
 }

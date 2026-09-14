@@ -2,14 +2,16 @@ import { IConfigField, IField } from "../model/IConfigField"
 import * as serviceDynamics from "../Service"
 import * as Mock from "../Mock"
 
-export const getDataCustomer = async (id: string, config: IConfigField): Promise<any> => {
+export type CustomerData = Record<string, unknown>;
+
+export const getDataCustomer = async (id: string, config: IConfigField): Promise<CustomerData> => {
 
     if (Mock.isMock) {
         await sleep(500);
         return Mock.customerData;
     }
-    let odata = `?$select=${config.fields.map(x => x.logicalName).toString()}`;
-    return serviceDynamics.RetrieveRecord(config.entityLogicalname, id, odata);
+    const odata = `?$select=${config.fields.map(x => x.logicalName).toString()}`;
+    return await serviceDynamics.RetrieveRecord(config.entityLogicalname, id, odata) as CustomerData;
 
 }
 
@@ -20,12 +22,12 @@ export const getConfigVariable = async (): Promise<IConfigField> => {
         return Mock.ConfigurationField;
     }
 
-    const config = JSON.parse(await serviceDynamics.getDefaultValueEnvironmentVariableBySchemaname("academy_customerfieldsconfig"));
+    const config = JSON.parse(await serviceDynamics.getDefaultValueEnvironmentVariableBySchemaname("academy_customerfieldsconfig")) as IConfigField;
 
     if (!config)
-        throw ("Parâmetro de campos não configurado");
+        throw new Error("Parâmetro de campos não configurado");
 
-    return config as IConfigField;
+    return config;
 }
 
 export const updateEntity = async (id: string, config: IConfigField): Promise<void> => {
@@ -33,7 +35,7 @@ export const updateEntity = async (id: string, config: IConfigField): Promise<vo
         await sleep(2000);
         return;
     }
-    let objeto: any = {};
+    const objeto: CustomerData = {};
 
     config.fields.forEach(x=> objeto[x.logicalName] = x.value);
 
