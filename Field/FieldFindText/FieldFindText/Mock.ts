@@ -1,7 +1,34 @@
 
 export const isMock = window.location.hostname === "localhost";
 
-export const data: any = [
+export interface MetadataLabel {
+    Label: string;
+    LanguageCode?: number;
+    IsManaged?: boolean;
+    MetadataId?: string;
+    HasChanged?: boolean | null;
+}
+
+export interface MetadataDisplayName {
+    LocalizedLabels?: MetadataLabel[];
+    UserLocalizedLabel?: MetadataLabel | null;
+}
+
+export interface MetadataAttribute {
+    "@odata.type"?: string;
+    LogicalName: string;
+    MetadataId?: string;
+    DisplayName: MetadataDisplayName;
+}
+
+export interface MetadataEntity {
+    LogicalName: string;
+    MetadataId?: string;
+    DisplayName: MetadataDisplayName;
+    Attributes: MetadataAttribute[];
+}
+
+export const data: MetadataEntity[] = [
     {
         "LogicalName": "account",
         "MetadataId": "70816501-edb9-4740-a16c-6a5efbc05d84",
