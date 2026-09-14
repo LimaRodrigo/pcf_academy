@@ -9,8 +9,10 @@ export interface IMainProps {
   context: ComponentFramework.Context<IInputs>;
 }
 
+type TableItem = Record<string, unknown> & { id: string };
+
 export interface IMainState {
-  items?: any[],
+  items?: TableItem[],
   tableColumns?: IColumn[],
   itemsChart: IDataChart[]
 }
@@ -29,16 +31,15 @@ export function Main(props: IMainProps) {
   }, [props.context.parameters.accountDataSet]);
 
 
-  const generateList = (): any[] => {
+  const generateList = (): TableItem[] => {
 
 
-    let itens: any[] = [];
-    let columns = props.context.parameters.accountDataSet.columns.map(x => x.name);
-    let ids: any[] = props.context.parameters.accountDataSet.sortedRecordIds;
+    const itens: TableItem[] = [];
+    const columns = props.context.parameters.accountDataSet.columns.map(x => x.name);
+    const ids: string[] = props.context.parameters.accountDataSet.sortedRecordIds;
 
     ids.forEach((id) => {
-      let item: any = {};
-      item.id = id;
+      const item: TableItem = { id };
       columns.forEach((col) => {
         item[col + "_formatted"] = props.context.parameters.accountDataSet.records[id].getFormattedValue(col);
         item[col] = props.context.parameters.accountDataSet.records[id].getValue(col);
@@ -50,7 +51,7 @@ export function Main(props: IMainProps) {
   }
 
   const generateCollumns = (): IColumn[] => {
-    let columns: IColumn[] = [];
+    const columns: IColumn[] = [];
     const columnsData = props.context.parameters.accountDataSet.columns;
 
     columnsData.forEach((col) => {
@@ -67,13 +68,15 @@ export function Main(props: IMainProps) {
     return columns;
   }
 
-  const onInvokeItemTable = (item?: any, index?: number | undefined, ev?: Event | undefined) => {
-    var data: any = {};
-    //@ts-ignore
-    data["entityName"] = props.context.page.entityTypeName;
-    data["entityId"] = item.id;
+  const onInvokeItemTable = (item?: TableItem, index?: number, ev?: Event) => {
+    if (!item) return;
 
-    props.context.navigation.openForm(data);
+    const data = {
+      entityName: props.context.parameters.accountDataSet.getTargetEntityType(),
+      entityId: item.id
+    };
+
+    void props.context.navigation.openForm(data);
   }
 
   const getIconRevenue = (val: number) => {
@@ -87,45 +90,52 @@ export function Main(props: IMainProps) {
       return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAADsAAAA7AF5KHG9AAAAGXRFWHRTb2Z0d2FyZQB3d3cuaW5rc2NhcGUub3Jnm+48GgAABCNJREFUWIWtl01sVFUUx3/nvjedTmmFdGGKbQVqhIimEKAUYsLHmAKCujBMDKE2xoWy0MS4kRUxEr9i4obEjS40gJh0pRFF0VBkUaEhRvGjaG3T1CqFhQIznc6b9+5xYb9m5g3zpvLfzbnnnv/vnbn3nTwhosaSPc1xy0Ex2mWMtBhjEggGQBVrrWZRO2otX9kYrzZ9efRqlLpSKWEiuX+HI84Rx5GVIhXTmQbC94PLvtUDS/uO9S0IYGxnqrHWT3zhurJBKnOGgwDpdO49PxZ/fkXf+1ORAca3dnclaswnxpjaBTnP0+RkHs/zv8WPPb784rG/itdNceBKsntfXdw9dTvMAWKuAdiE610Y7tzXXrxe0IHxrd1ddXH3lEgpWOEuofbpvbgdaxAj+D8PMfXOcdTzSlIDP+Bmeiauf6jVjhUDvVdm1meN/t721JJEzHxc0RyIda4hntqNs7wZc/dd1OzaQuzhLeHJZn45aRHjfDq2OZUoAfAde9o4JkEESeOSUp+QGIQdMl3vW3OwAGAiuX+H68qGKOb/7QppklOxcfOhXhzpSDXNAjjiHKnqqjlOCFRIDFDVsHC9iDkEYMaSPc2OIyuju4OEPK244QCBDQUAoWfwwccaTNxyMOobblZhZmX+gsC35aosigd1u40Y7arOHQgDDjsXgF8eAFSTxhhpqRogCCkaEgusEoTlTkug3Rgjka5egWwQAuCXhDyvNFYobTMg0e/PzLaQpyqOqSpeLgS0IEkWmwUNOj+sA4Wxqaxf7goWyKhyi1NSDcBcmcC35Cq2HxC9bqzVbLX+weDvJRD+j78CYFVJT5YOpTIEw65aO4rjrK4KYHSc9AuHcdeuBtch+Ok3/EuXUVUyaQ8t9/IptofvXUVPA1UBAARDowRDo7O/7bT5ra5diZSvjXXltUinpVgxF3f9A7jr7idQIX0zV505ZBJ19nMBuJZ8cjAWc1ZF3Sl1CRa99RLOPcsA8H4ZZuK5w9hMNcdJ3l1+/qNnDICvPFtND2KPJGfNAWrua6P+0e1VmOOJNW/A9Dheeubo2Uwm90E2myefDwgCi1pFFayCDZS8Z5maypO+mcNvqC+paBoXR3YXeHvZwIfDAO5MMB+LH/Cz2VW5HJsqFZjsG6Bh7865oWSV7NmBqPb9XuP1l+fBzGmkI9VkjLmg0FqpTN1Dm7njiV2oH3DjxEmy5y5Gcf/TMXZja3/veCgAwHDnvnZDcBIWMCVvIYExY+ye1v7eS/PjJYOo7fyJH/I1uk7gm9to32+t3VhsHgoAcO+53mte440dCq8Amf/h7Anyer7x+vb53wIFaJUqjHSkmkTMIYQeYFFE44zCcWOdN2dOezlFHsZXt6XqM1POHqO6XWEt6AqQ6Y8B/QdkRES+A3smUauf3dnXm45S91+0IKS2XKCO/QAAAABJRU5ErkJggg==";
   }
 
-  const onRendertable = (item?: any, index?: number | undefined, column?: IColumn | undefined) => {
-    const columnName = column?.fieldName || "";
+  const onRendertable = (item?: TableItem, index?: number, column?: IColumn) => {
+    const columnName = column?.fieldName ?? "";
     if (!item)
       return <></>;
     switch (columnName) {
       case "revenue_formatted":
         return (
           <Stack horizontal horizontalAlign='start' tokens={{ childrenGap: 10 }}>
-            {item[columnName] &&
+            {item[columnName] !== undefined && item[columnName] !== null &&
               <Stack.Item>
                 <img height={24} src={getIconRevenue(item[columnName.replace("_formatted", "")] as number)} />
               </Stack.Item>
             }
             <Stack.Item>
-              {item[columnName]}
+              {renderCellValue(item[columnName])}
             </Stack.Item>
           </Stack>
         );
       default:
-        return <>{item[columnName]}</>;
+        return <>{renderCellValue(item[columnName])}</>;
     }
   }
 
-  const generateDataChart = (itens: any[]): IDataChart[] => {
-    let list: IDataChart[] = [];
-    let registers = [...itens];
+  const renderCellValue = (value: unknown): React.ReactNode => {
+    if (value === null || value === undefined || typeof value === "boolean" || typeof value === "string" || typeof value === "number")
+      return value;
+
+    return JSON.stringify(value) ?? "";
+  }
+
+  const generateDataChart = (itens: TableItem[]): IDataChart[] => {
+    const list: IDataChart[] = [];
+    const registers = [...itens];
     if (registers?.length === 0 || registers[0].name === "val")
       return list;
-    let field = props.context.parameters.fieldChart.raw! + "_formatted";
-    let legends = (registers.filter((item, i, arr) => arr.findIndex(x => x[field] === item[field]) === i)).map(x => x[field]);
+    const field = props.context.parameters.fieldChart.raw! + "_formatted";
+    const legends = (registers.filter((item, i, arr) => arr.findIndex(x => x[field] === item[field]) === i)).map(x => x[field]);
 
     legends.forEach((legend, i: number) => {
-      let itensLegends = registers.filter(x => x[field] === legend);
-      let color = i === 0 ? colors.azul : i === 1 ? colors.verde : colors.vermelho;
+      const itensLegends = registers.filter(x => x[field] === legend);
+      const color = [colors.azul, colors.verde, colors.vermelho][i] ?? colors.vermelho;
 
       list.push({
         color: color,
         data: itensLegends.length,
-        label: itensLegends[0][field] ? itensLegends[0][field] : "vazio"
+        label: renderCellValue(itensLegends[0][field]) as string
       } as IDataChart);
 
     });
@@ -137,7 +147,7 @@ export function Main(props: IMainProps) {
       {console.info("state", state)}
       <Stack.Item styles={styleStackA}>
         <DetailsList
-          items={state.items || []}
+          items={state.items ?? []}
           compact={false}
           columns={state.tableColumns}
           layoutMode={DetailsListLayoutMode.justified}
