@@ -1,87 +1,91 @@
-export const RetrieveMultipleRecords = (entityLogicalName: string, options?: string | undefined, maxPageSize?: number | undefined): Promise<ComponentFramework.WebApi.RetrieveMultipleResponse> => {
-    return new Promise((resolve, reject) => {
-        //@ts-ignore
-        // eslint-disable-next-line
-        Xrm.WebApi.retrieveMultipleRecords(entityLogicalName, options, maxPageSize).then(
-            function (response: ComponentFramework.WebApi.RetrieveMultipleResponse) {
-                resolve(response);
-            },
-            function (error: any) {
-                reject(error.message);
-            });
-    });
-}
-export const RetrieveRecord = (entityLogicalName: string, id: string, options?: string | undefined): Promise<ComponentFramework.WebApi.Entity> => {
-    return new Promise((resolve, reject) => {
-        //@ts-ignore
-        // eslint-disable-next-line
-        Xrm.WebApi.retrieveRecord(entityLogicalName, id, options).then(
-            function (response: ComponentFramework.WebApi.Entity) {
-                resolve(response);
-            },
-            function (error: any) {
-                reject(error.message);
-            });
-    });
-}
-export const CreateRegisterAsync = (nomeEntidade: string, objeto: any): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        //@ts-ignore
-        // eslint-disable-next-line
-        Xrm.WebApi.createRecord(nomeEntidade, objeto).then(
-            (result: any) => {
-                resolve(result.id);
-            },
-            (e: any) => {
-                reject(e);
-            }
-        );
-    });
+type DynamicsRecord = Record<string, unknown>;
+
+interface DynamicsError {
+    message?: string;
 }
 
-export const FetchJS = async (url: string): Promise<any> => {
-    return new Promise((resolve, reject) => {
-        fetch(url)
-            .then((response) => {
-                if (!response.ok)
-                    reject("erro");
-                return response.json();
-            }).then((data) => {
-                resolve(data.value);
-            }).catch((e) => reject(e));
-    });
+interface DynamicsResult {
+    id: string;
+}
+
+const getErrorMessage = (error: unknown): string => {
+    if (typeof error === "object" && error !== null && "message" in error) {
+        const message = (error as DynamicsError).message;
+        if (typeof message === "string") return message;
+    }
+    return "Erro desconhecido";
+};
+
+export const RetrieveMultipleRecords = async (entityLogicalName: string, options?: string, maxPageSize?: number): Promise<ComponentFramework.WebApi.RetrieveMultipleResponse> => {
+    try {
+        // @ts-expect-error Xrm is supplied by the model-driven app runtime.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        return await Xrm.WebApi.retrieveMultipleRecords(entityLogicalName, options, maxPageSize) as ComponentFramework.WebApi.RetrieveMultipleResponse;
+    } catch (error: unknown) {
+        throw new Error(getErrorMessage(error));
+    }
+}
+export const RetrieveRecord = async (entityLogicalName: string, id: string, options?: string): Promise<ComponentFramework.WebApi.Entity> => {
+    try {
+        // @ts-expect-error Xrm is supplied by the model-driven app runtime.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        return await Xrm.WebApi.retrieveRecord(entityLogicalName, id, options) as ComponentFramework.WebApi.Entity;
+    } catch (error: unknown) {
+        throw new Error(getErrorMessage(error));
+    }
+}
+export const CreateRegisterAsync = async (nomeEntidade: string, objeto: DynamicsRecord): Promise<string> => {
+    try {
+        // @ts-expect-error Xrm is supplied by the model-driven app runtime.
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+        const result = await Xrm.WebApi.createRecord(nomeEntidade, objeto) as DynamicsResult;
+        return result.id;
+    } catch (error: unknown) {
+        throw new Error(getErrorMessage(error));
+    }
+}
+
+export const FetchJS = async <T = unknown>(url: string): Promise<T> => {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Erro ao consultar o endpoint");
+
+    const data: unknown = await response.json();
+    if (typeof data === "object" && data !== null && "value" in data)
+        return (data as { value: T }).value;
+
+    return data as T;
 }
 
 export const getDefaultValueEnvironmentVariableBySchemaname = async (schemaname: string): Promise<string> => {
     let value = "";
-    let odata = `?$filter=schemaname eq '${schemaname}'&$select=schemaname,defaultvalue`;
-    let response = await RetrieveMultipleRecords("environmentvariabledefinition", odata);
+    const odata = `?$filter=schemaname eq '${schemaname}'&$select=schemaname,defaultvalue`;
+    const response = await RetrieveMultipleRecords("environmentvariabledefinition", odata);
 
-    if (response.entities.length === 1)
-        value = response.entities[0].defaultvalue;
+    if (response.entities.length === 1) {
+        const entity = response.entities[0] as unknown as DynamicsRecord;
+        value = typeof entity.defaultvalue === "string" ? entity.defaultvalue : "";
+    }
     return value;
 }
 
 
-export const groupBy = (input: any, key: string): Array<any> => {
-    return input.reduce((acc: any, currentValue: any) => {
-        let groupKey = currentValue[key];
-        if (!acc[groupKey]) {
-            acc[groupKey] = [];
-        }
+export const groupBy = <T extends object>(input: T[], key: keyof T): Record<string, T[]> => {
+    return input.reduce<Record<string, T[]>>((acc, currentValue) => {
+        const groupKey = String(currentValue[key]);
+        acc[groupKey] ??= [];
         acc[groupKey].push(currentValue);
         return acc;
     }, {});
 };
 
 
-export const getRandonListObjects = (list: any[], total: number, fieldCompare: any): any[] => {
+export const getRandonListObjects = <T extends object, K extends keyof T>(list: T[], total: number, fieldCompare: K): T[] => {
     if (list.length === 0) return list;
-    let items: any[] = [];
+    const items: T[] = [];
 
     while (items.length <= total) {
-        let itemRand = list[Math.floor(Math.random() * list.length)];
-        if (items.filter(x => x[fieldCompare] === itemRand[fieldCompare]).length === 0) {
+        const itemRand = list[Math.floor(Math.random() * list.length)];
+        if (itemRand && items.filter(x => x[fieldCompare] === itemRand[fieldCompare]).length === 0) {
             items.push({ ...itemRand });
         }
     }
@@ -89,5 +93,5 @@ export const getRandonListObjects = (list: any[], total: number, fieldCompare: a
 }
 
 export const sleep = (ms: number) => {
-    return new Promise((resolve, reject) => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }

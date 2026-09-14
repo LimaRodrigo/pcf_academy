@@ -11,13 +11,13 @@ interface IQuestionProps {
 export function Question(props: IQuestionProps) {
     const context = useContext<IGlobalContext | undefined>(useGlobalContext);
     const onclickAnswer = (answer: boolean) => {
-        let question = context?.state?.questions ? [...context.state.questions] : [];
+        const question = context?.state?.questions ? [...context.state.questions] : [];
 
         question?.forEach(x => {
             if (x.academy_questionspositiveconfimationid === props.question.academy_questionspositiveconfimationid)
                 x.isCorrect = answer;
         });
-        context?.setState({ ...context.state!, questions: question!, answerQuestionId: props.question.academy_questionspositiveconfimationid })
+        context?.setState({ ...context.state!, questions: question, answerQuestionId: props.question.academy_questionspositiveconfimationid })
     }
 
     return (

@@ -23,15 +23,15 @@ export function Main(props: IMainProps) {
   });
 
   useEffect(() => {
-    onload();
+    void onload();
   }, []);
 
   useEffect(() => {
-    onload();
+    void onload();
   }, [props.customerId, props.incidentId]);
 
   useEffect(() => {
-    let response = state.questions.filter(x => x.isCorrect === undefined);
+    const response = state.questions.filter(x => x.isCorrect === undefined);
     if (state.questions.length > 0 && response.length === 0)
       setState({ ...state, isComplete: true });
   }, [state.answerQuestionId]);
@@ -65,7 +65,7 @@ export function Main(props: IMainProps) {
 
     await BO.createPositiveConfirmation(state.questions, props.incidentId);
 
-    let response = state.questions.filter(x => x.isCorrect !== true);
+    const response = state.questions.filter(x => x.isCorrect !== true);
     setState({
       ...state,
       isCompleteConfirmation: true,
@@ -104,9 +104,7 @@ export function Main(props: IMainProps) {
               </Stack>
               :
               <>
-                {state.questions &&
-
-                  state.questions.map((item, i) => {
+                {state.questions?.map((item) => {
                     return (<Stack horizontal tokens={{ childrenGap: 8 }} key={item.academy_questionspositiveconfimationid}>
                       <Stack.Item className={verticalStyle}>
                         <Separator vertical>
@@ -127,7 +125,7 @@ export function Main(props: IMainProps) {
                     <MessageBar
                       actions={
                         <div>
-                          <MessageBarButton onClick={setConfimation} disabled={state.isLoading}>Sim</MessageBarButton>
+                          <MessageBarButton onClick={() => { void setConfimation(); }} disabled={state.isLoading}>Sim</MessageBarButton>
                         </div>
                       }
                       messageBarType={MessageBarType.success}
