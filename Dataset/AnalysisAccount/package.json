@@ -16,7 +16,8 @@
     "@fluentui/react-components": "9.46.2",
     "@fluentui/react-charting": "^5.25.11",
     "react": "16.14.0",
-    "react-dom": "16.14.0"
+    "react-dom": "16.14.0",
+    "immutable": ">=4.3.9"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.1",
@@ -31,6 +32,7 @@
     "pcf-start": "^1",
     "react": "^16.14.0",
     "typescript": "^5.8.3",
-    "typescript-eslint": "8.44.0"
+    "typescript-eslint": "8.44.0",
+    "immutable": ">=4.3.9"
   }
 }
