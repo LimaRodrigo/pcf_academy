@@ -14,7 +14,7 @@ export interface IMain {
 export interface IMainState {
   customerId?: string;
   configFields?: IConfigField;
-  customer?: any;
+  customer?: BO.CustomerData;
   menssageBar?: IMenssageNotification;
   isLoading: boolean;
   isFormUpdate: boolean;
@@ -27,8 +27,8 @@ export function Main(props: IMain) {
 
     const Onload = async () => {
       try {
-        //@ts-ignore
-        if (!props.context.page.entityId)
+        const pageContext = props.context as ComponentFramework.Context<IInputs> & { page?: { entityId?: string } };
+        if (!pageContext.page?.entityId)
           return;
 
         if (!props.customerId) {
@@ -40,8 +40,8 @@ export function Main(props: IMain) {
           return;
         }
 
-        let configFields = await BO.getConfigVariable();
-        let customer = await BO.getDataCustomer(props.customerId!, configFields);
+        const configFields = await BO.getConfigVariable();
+        const customer = await BO.getDataCustomer(props.customerId, configFields);
         configFields.fields.forEach(x => x.value = customer[x.logicalName]);
 
         setState({
@@ -56,7 +56,7 @@ export function Main(props: IMain) {
         console.error(error);
       }
     }
-    Onload();
+    void Onload();
   }, [props.customerId]);
 
 
@@ -76,20 +76,22 @@ export function Main(props: IMain) {
         <TextField
           required={filed.required}
           disabled={filed.readonly || state.isLoading}
-          value={filed.value}
+          value={typeof filed.value === "string" ? filed.value : ""}
           styles={{ root: { width: "100%" } }}
-          onChange={(event: any, newValue?: string | undefined) => { onChangeText(filed, newValue); }}
+          onChange={(_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => { onChangeText(filed, newValue); }}
           errorMessage={filed.errorMessage}
         />
       </Stack>
     );
   }
 
-  const onChangeText = (field: IField, newValue?: string | undefined,) => {
-    let config = state.configFields;
-    let item = config?.fields.find(x => x.logicalName == field.logicalName);
-    item!.value = newValue;
-    item!.errorMessage = newValue ? undefined : "Campo Obrigatório";
+  const onChangeText = (field: IField, newValue?: string) => {
+    const config = state.configFields;
+    const item = config?.fields.find(x => x.logicalName === field.logicalName);
+    if (!item) return;
+
+    item.value = newValue;
+    item.errorMessage = newValue ? undefined : "Campo Obrigatório";
     setState({
       ...state,
       configFields: config
@@ -116,7 +118,7 @@ export function Main(props: IMain) {
     let isFormValid = true;
 
     state.configFields?.fields.forEach(x => {
-      let isValid = validateItemRequired(x);
+      const isValid = validateItemRequired(x);
       if (isFormValid)
         isFormValid = isValid;
     });
@@ -126,13 +128,12 @@ export function Main(props: IMain) {
 
 
   const validateItemRequired = (field: IField): boolean => {
-    let isValid = true;
     if (field.required && !field.value) {
       field.errorMessage = "Campo Obrigatório";
       return false;
     }
     field.errorMessage = undefined;
-    return isValid;
+    return true;
   }
 
   const setMenssage = (msg?: IMenssageNotification) => {
@@ -165,10 +166,10 @@ export function Main(props: IMain) {
         {console.log("Challenge_state", state)}
         {generateLoading()}
         {generateMenssageBar()}
-        {state.configFields?.fields && state.configFields?.fields.map((x) => generateField(x))}
+        {state.configFields?.fields?.map((x) => generateField(x))}
         {state.configFields &&
           <Stack horizontal horizontalAlign='end' tokens={{ padding: "5px 15px 5px 15px" }}>
-            <PrimaryButton text="Atualizar" onClick={onClickUpdate} allowDisabledFocus disabled={state.isLoading || !state.configFields} />
+            <PrimaryButton text="Atualizar" onClick={() => { void onClickUpdate(); }} allowDisabledFocus disabled={state.isLoading || !state.configFields} />
           </Stack>
         }
       </Stack>
