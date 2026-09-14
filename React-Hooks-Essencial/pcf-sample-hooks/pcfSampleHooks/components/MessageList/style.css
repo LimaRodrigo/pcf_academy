@@ -1,0 +1,15 @@
+.pcf-sample-hooks-message-list-container {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    /* flex-grow: 1; */
+    height: 400px;
+    /* background-color: blueviolet; */
+}
+
+.pcf-sample-hooks-message-list-message-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 50%;
+}

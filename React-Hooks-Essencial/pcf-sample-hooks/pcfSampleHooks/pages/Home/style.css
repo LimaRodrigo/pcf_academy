@@ -1,0 +1,30 @@
+.pcf-sample-hooks-container-home{
+    padding: 12px;
+}
+.pcf-sample-hooks-body-home{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    height: 500px;
+}
+.pcf-sample-hooks-body-item-chat{
+    flex-grow: 2;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+.pcf-sample-hooks-body-item-contacts{
+    flex-grow: 0.5;
+    margin-left: 6px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    border-radius: 5px;
+}
+.pcf-sample-hooks-contact-list-home{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
